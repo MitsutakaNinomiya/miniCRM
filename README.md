@@ -4,7 +4,7 @@ Next.js（App Router）+ Supabase を用いた、シンプルな顧客管理（�
 認証・RLS（Row Level Security）を使い、ログインユーザーは自分のデータのみ閲覧/更新できます。
 
 ## Demo
-- （VercelのURLを貼る）
+- https://mini-crm-omega.vercel.app/
 
 ## 機能
 - メール/パスワード認証（Supabase Auth）
