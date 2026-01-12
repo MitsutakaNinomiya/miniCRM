@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import CustomerForm, { CustomerFormValues } from "@/components/CustomerForm";
@@ -13,7 +13,7 @@ type CustomerRow = {
 };
 
 export default function EditCustomerPage() {
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const id = params.id;
