@@ -1,90 +1,64 @@
-# Mini CRM（顧客管理アプリ）
+# Mini CRM（Next.js + Supabase）
 
-Next.js（App Router）+ Supabase を用いた、シンプルな顧客管理（ミニCRM）です。  
-認証・RLS（Row Level Security）を使い、ログインユーザーは自分のデータのみ閲覧/更新できます。
+未経験から「実務で使える管理画面の型」を身につけることを目的に開発した、シンプルな顧客管理（CRM）アプリです。  
+**認証・RLS（Row Level Security）・CRUD・ルートガード**を一通り実装し、セキュリティと保守性を重視しています。
 
-## Demo
-- https://mini-crm-omega.vercel.app/
+このアプリから、**管理画面の基本構成・認証設計・データ分離の考え方**が分かるように設計しています。
 
+## デモ
+- Vercel：  https://mini-r9hyyhjij-mitsutakaninomiyas-projects.vercel.app/
 
-## 機能
-- メール/パスワード認証（Supabase Auth）
-- 顧客CRUD
-  - Create：顧客追加（name / email / memo）
-  - Read：一覧表示
-  - Update：編集
-  - Delete：削除
-- データ分離
-  - RLSにより「ログインユーザーは自分の顧客データのみ」アクセス可能
-- ルートガード
-  - middlewareで `/dashboard` / `/customers/*` を未ログイン時に `/login` へリダイレクト
-- UI
-  - shadcn/ui + Tailwind による管理画面UI
-  - フォームは共通コンポーネント化（New/Editで再利用）
-  - react-hook-form + zod バリデーション
+## 画面イメージ
+
+### ログイン
+![ログイン画面](./images/login.png)
+
+### ダッシュボード
+![ダッシュボード](./images/dashboard.png)
+
+### 顧客管理
+![顧客管理](./images/customers.png)
 
 ## 技術スタック
 - Next.js（App Router）
 - TypeScript
-- Tailwind CSS
-- shadcn/ui
-- Supabase（Auth / Database / RLS）
-- react-hook-form / zod
+- Tailwind CSS / shadcn/ui
+- Supabase（Auth / Postgres / RLS）
+- react-hook-form + zod
+- Vercel
 
-## こだわり（設計メモ）
-- 認証状態がない操作を防ぐため、アプリ側（middleware）とDB側（RLS）で二重に保護
-- Server Componentで一覧取得、Client Componentで操作（削除など）を分離して実務構成に寄せた
-- DB側で `user_id` の default を `auth.uid()` にし、フロントから user_id を送らない設計にした（安全で拡張しやすい）
+## 実装機能
+- 認証（サインアップ / ログイン / ログアウト）
+- middleware によるルートガード（`/dashboard`, `/customers/*`）
+- 顧客CRUD（作成 / 一覧 / 編集 / 削除）
+  - 項目：name / email / memo
+- ユーザーごとのデータ分離（RLS）
 
-## セットアップ
-### 1. インストール
+## セキュリティ設計
+- フロントエンドから `user_id` を送らない設計
+  - DB側で `auth.uid()` を使用して所有者を判定
+- 未認証ユーザーの操作を2段階で防止
+  - UIレベルでの表示制御
+  - middleware による `/login` への強制リダイレクト
+
+## 画面イメージ
+- ログイン画面
+- ダッシュボード
+- 顧客一覧 / 新規作成 / 編集
+
+## 詰まった点と解決（学び）
+- **RLSエラー**：`new row violates row level security policy`
+  - 原因：ログアウト状態で Add / Edit を実行
+  - 対策：Header表示制御 + middleware によるアクセス制御
+- **Vercelビルドエラー**：`useSearchParams() should be wrapped in a suspense boundary`
+  - 対策：`/login` を Server Component と Client Component に分離し、`Suspense` でラップ
+
+## ローカル起動
 ```bash
-npm i
-2. 環境変数
-プロジェクト直下に .env.local を作成し、Supabaseの値を設定します。
-
-env
-コードをコピーする
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-3. 起動
-bash
-コードをコピーする
+npm install
 npm run dev
-Supabase（テーブル/ポリシー概要）
-customers
 
-id（uuid）
 
-user_id（uuid, default: auth.uid()）
-
-name / email / memo / created_at
-
-RLS Policies（select/insert/update/delete）
-
-auth.uid() = user_id
-
-今後の改善案
-検索 / ソート / ページネーション
-
-ダークモード切替
-
-一覧の行クリックで詳細表示
-
-テーブルのUI改善（loading skeleton / empty state）
-
-yaml
-コードをコピーする
-
----
-
-## 次の1アクション
-README.md に貼ったら、**VercelのURL（あれば）**と、  
-「こだわり」欄で **あなたが強調したい点**を1つだけ教えて。
-
-迷うならおすすめはこれ：
-- **RLS + middleware + server/client分離**  
-この3つは未経験の中で差別化が強い。
 
 
 
