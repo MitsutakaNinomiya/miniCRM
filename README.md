@@ -6,6 +6,7 @@ Next.js（App Router）+ Supabase を用いた、シンプルな顧客管理（�
 ## Demo
 - https://mini-crm-omega.vercel.app/
 
+
 ## 機能
 - メール/パスワード認証（Supabase Auth）
 - 顧客CRUD
